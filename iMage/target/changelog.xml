@@ -1,4 +1,10 @@
 <changelog><commit>
+					<time>1525695196</time>
+					<sha1>34253b07a196be43359f0a5701ba4f103561f73b</sha1>
+					<author>LarsGavris</author>
+					<branches>refs/heads/master</branches>
+					<msg>applied patch</msg>
+				</commit><commit>
 					<time>1525684452</time>
 					<sha1>090f9dd647fce82448aba891aeca7ce04f500ab9</sha1>
 					<author>LarsGavris</author>

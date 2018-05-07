@@ -26,5 +26,10 @@
 			</includes>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<includes>
+				<include>.gitignore</include>
+				<include>*.launch</include>
+				<include>LICENSE</include></includes></fileSet>
 	</fileSets>
 </assembly>
