@@ -25,6 +25,7 @@ repo/
 .project
 .settings
 bin/
+iMage/target/
 
 # Mac
 .DS_Store
