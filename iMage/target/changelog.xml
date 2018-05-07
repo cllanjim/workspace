@@ -1,0 +1,13 @@
+<changelog><commit>
+					<time>1525683640</time>
+					<sha1>d88d90852f47701c36bbeb02ef5c37e9a901e44e</sha1>
+					<author>LarsGavris</author>
+					<branches>refs/heads/master</branches>
+					<msg>created maven project 'iMage'</msg>
+				</commit><commit>
+					<time>1525683308</time>
+					<sha1>3cb681a30dbcdb5541cc7ceaff2ea5737b67bd88</sha1>
+					<author>LarsGavris</author>
+					<branches>refs/heads/master</branches>
+					<msg>added gitignore</msg>
+				</commit></changelog>
