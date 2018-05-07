@@ -1,4 +1,16 @@
 <changelog><commit>
+					<time>1525684110</time>
+					<sha1>6abc04d3fdd164d07fa17802d1aed541c7fd7d47</sha1>
+					<author>LarsGavris</author>
+					<branches>refs/heads/master</branches>
+					<msg>created maven module 'jmjrst.main'</msg>
+				</commit><commit>
+					<time>1525683896</time>
+					<sha1>96375982fc67784e8881ac0a5b19bafb81dfccb6</sha1>
+					<author>LarsGavris</author>
+					<branches>refs/heads/master</branches>
+					<msg>first successful build with maven</msg>
+				</commit><commit>
 					<time>1525683640</time>
 					<sha1>d88d90852f47701c36bbeb02ef5c37e9a901e44e</sha1>
 					<author>LarsGavris</author>
