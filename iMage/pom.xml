@@ -18,5 +18,9 @@
 	</repositories>
   <modules>
   	<module>jmjrst.main</module>
+  	
+  	
+
+  	<module>shutterpile</module>
   </modules>
 </project>
