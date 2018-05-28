@@ -27,7 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Ignore;
 
 /**
  * Sommersemester 2018 - Übungsblatt 1 - Aufgabe 2
@@ -37,9 +36,8 @@ public class GeneratorTest {
    * Class under test.
    */
   private Generator generator;
-  
-  private int imageHeight;
-  private int imageWidth;
+
+  private int imageHeight, imageWidth;
   private static final File TEST_DIR = new File("target/dataTest");
   private static final String IMAGE_FILE = "/picture.jpg";
 
@@ -130,7 +128,6 @@ public class GeneratorTest {
    * Aufgabe 2 d) Teil 1
    */
   @Test
-  @Ignore
   public void testRotateImage_RotateImage0() {
     rotatedImageTestResult = generator.rotateImage(testImage, 0);
 
@@ -141,7 +138,6 @@ public class GeneratorTest {
    * Aufgabe 2 d) Teil 2
    */
   @Test
-  @Ignore
   public void testRotateImage_RotateNull0() {
     rotatedImageTestResult = generator.rotateImage(null, 0);
 
@@ -152,7 +148,6 @@ public class GeneratorTest {
    * Aufgabe 2 e)
    */
   @Test(expected = IllegalArgumentException.class)
-  @Ignore
   public void testRotateImage_Rotate1() {
     generator.rotateImage(testImage, 0.5);
   }
@@ -161,7 +156,6 @@ public class GeneratorTest {
    * Aufgabe 2 f) Teil 1
    */
   @Test
-  @Ignore
   public void testRotateImage_Rotate90() {
     rotatedImageTestResult = generator.rotateImage(testImage, Generator.ROTATE_90);
 
@@ -179,7 +173,6 @@ public class GeneratorTest {
    * Aufgabe 2 f) Teil 2
    */
   @Test
-  @Ignore
   public void testRotateImage_Rotate270() {
     rotatedImageTestResult = generator.rotateImage(testImage, Generator.ROTATE_270);
 
@@ -197,7 +190,6 @@ public class GeneratorTest {
    * Aufgabe 2 g)
    */
   @Test
-  @Ignore
   public void testRotateImage_Rotate180() {
     rotatedImageTestResult = generator.rotateImage(testImage, Math.toRadians(180));
 

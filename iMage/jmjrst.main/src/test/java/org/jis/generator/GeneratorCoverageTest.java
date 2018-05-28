@@ -38,8 +38,7 @@ public class GeneratorCoverageTest {
   @Mock
   private Main mockMain;
 
-  private int imageHeight;
-  private int imageWidth;
+  private int imageHeight, imageWidth;
   private static final File TEST_DIR = new File("target/testOut/GeneratorTest");
   private static final File IMAGE_FILE = new File("src/test/resources/picture.jpg");;
 

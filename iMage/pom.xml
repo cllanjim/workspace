@@ -21,6 +21,8 @@
   	
   	
 
-  	<module>shutterpile</module>
+  	
+  	<module>iMage.shutterpile</module>
+  	<module>iMage.shutterpile-cli</module>
   </modules>
 </project>

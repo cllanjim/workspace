@@ -719,7 +719,7 @@ public class Generator {
 
   public BufferedImage rotateImage(BufferedImage image, double rotate)
   {
-    if (rotate == 0) return image;
+	if (rotate == 0) return image; 
 
     AffineTransform transform = new AffineTransform();
 
@@ -741,9 +741,15 @@ public class Generator {
       width = image.getHeight(null); // swap
       height = image.getWidth(null);
     }
+    /**
+   	 * Sommersemester 2018, Übungsblatt 1, Aufgabe 2 g)
+   	 */
+    else if (Math.abs(rotate - Math.toRadians(180)) < 0.0000001d) {
+       	return rotateImage(rotateImage(image, ROTATE_90), ROTATE_90);
+   	}
     else
     {
-      throw new IllegalArgumentException("degree must be a mutiple of 90�!");
+      throw new IllegalArgumentException("degree must be a mutiple of 90°!");
     }
 
     // Return a new Image
