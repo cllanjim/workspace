@@ -23,6 +23,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.UIManager;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import org.iMage.plugins.JmjrstPlugin;
+import org.iMage.plugins.PluginManager;
 import org.jis.Main;
 import org.jis.listner.MenuListner;
 
@@ -49,6 +54,7 @@ public class Menu extends JMenuBar {
 	public JMenuItem look_motif;
 	public JMenuItem look_gtk;
 	public JMenuItem update_check;
+	public JMenuItem update_plugins;
 
 	/**
 	 * @param m
@@ -59,6 +65,8 @@ public class Menu extends JMenuBar {
 		JMenu datei = new JMenu(m.mes.getString("Menu.0"));
 		JMenu option = new JMenu(m.mes.getString("Menu.1"));
 		JMenu optionen_look = new JMenu(m.mes.getString("Menu.2"));
+		JMenu plugins = new JMenu(m.mes.getString("Menu.17"));
+		JMenu add_plugin = new JMenu(m.mes.getString("Menu.18"));
 		JMenu about = new JMenu(m.mes.getString("Menu.3"));
 
 		gener = new JMenuItem(m.mes.getString("Menu.4"));
@@ -91,6 +99,8 @@ public class Menu extends JMenuBar {
 		update_check = new JMenuItem(m.mes.getString("Menu.15"));
 		url = ClassLoader.getSystemResource("icons/system-software-update.png");
 		update_check.setIcon(new ImageIcon(url));
+		
+		update_plugins = new JMenuItem(m.mes.getString("Menu.19"));
 
 		look_windows = new JMenuItem(m.mes.getString("Menu.8"));
 		look_windows_classic = new JMenuItem(m.mes.getString("Menu.9"));
@@ -106,17 +116,23 @@ public class Menu extends JMenuBar {
 		datei.add(gener);
 		datei.add(zippen);
 		datei.add(gallerie);
-
 		datei.addSeparator();
 		datei.add(exit);
+		
 		option.add(optionen_look);
 		option.add(set_quality);
 		option.addSeparator();
 		option.add(update_check);
+		
+		plugins.add(add_plugin);
+		plugins.addSeparator();
+		plugins.add(update_plugins);
+		
 		about.add(info);
+		
 		this.add(datei);
 		this.add(option);
-
+		this.add(plugins);
 		this.add(about);
 
 		MenuListner al = new MenuListner(m, this);
@@ -133,8 +149,15 @@ public class Menu extends JMenuBar {
 		look_motif.addActionListener(al);
 		look_gtk.addActionListener(al);
 		update_check.addActionListener(al);
+		
+		PluginManager.getPlugins().forEach(plugin -> {
+			add_plugin.add(new JMenuItem("plugin name"));
+		});
+		if (add_plugin.getItemCount() == 0) {
+			add_plugin.add(new JMenuItem("nothing to load here"));
+		}
 
-		UIManager.LookAndFeelInfo uii[] = UIManager.getInstalledLookAndFeels();
+		UIManager.LookAndFeelInfo[] uii = UIManager.getInstalledLookAndFeels();
 		for (int i = 0; i < uii.length; i++) {
 			if (uii[i].toString().substring(uii[i].toString().lastIndexOf(" ") + 1, uii[i].toString().lastIndexOf("]")) //$NON-NLS-1$ //$NON-NLS-2$
 					.equalsIgnoreCase("com.sun.java.swing.plaf.windows.WindowsLookAndFeel")) //$NON-NLS-1$
