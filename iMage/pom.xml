@@ -17,12 +17,9 @@
 		</repository>
 	</repositories>
   <modules>
-  	<module>jmjrst.main</module>
-  	
-  	
-
-  	
   	<module>iMage.shutterpile</module>
-  	<module>iMage.shutterpile-cli</module>
+  	<module>iMage.facezine-plugin</module>
+  	<module>jmjrst.main</module>
+  	<module>iMage.iDeal</module>
   </modules>
 </project>

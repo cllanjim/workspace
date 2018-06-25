@@ -43,6 +43,7 @@ public final class PluginManager {
 		  sortedPlugins = new ArrayList<>();
 		  availablePlugins.forEachRemaining(sortedPlugins::add);
 		  Collections.sort(sortedPlugins);
+		  System.out.println("PluginManager: found and loaded " + sortedPlugins.size() + " plugins.");
 	  } catch (ServiceConfigurationError serviceError) {
           sortedPlugins = null;
           serviceError.printStackTrace();

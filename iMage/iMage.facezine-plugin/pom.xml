@@ -5,17 +5,13 @@
     <artifactId>iMage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+  <groupId>swt1.ub3.a2</groupId>
   <artifactId>2057298</artifactId>
   <dependencies>
   	<dependency>
-  		<groupId>swt1</groupId>
-  		<artifactId>iMage.shutterpile-base</artifactId>
+  		<groupId>swt1.ub3.a1</groupId>
+  		<artifactId>2057298</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
-  	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  	</dependency>
   </dependencies>
-  <groupId>swt1.ub2.a4</groupId>
 </project>

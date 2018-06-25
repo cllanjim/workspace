@@ -23,10 +23,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.UIManager;
 
-import java.util.List;
-import java.util.ArrayList;
-
-import org.iMage.plugins.JmjrstPlugin;
 import org.iMage.plugins.PluginManager;
 import org.jis.Main;
 import org.jis.listner.MenuListner;
@@ -151,7 +147,9 @@ public class Menu extends JMenuBar {
 		update_check.addActionListener(al);
 		
 		PluginManager.getPlugins().forEach(plugin -> {
-			add_plugin.add(new JMenuItem("plugin name"));
+			JMenuItem newPlugin = new JMenuItem(plugin.getName());
+			newPlugin.addActionListener(al);
+			add_plugin.add(newPlugin);
 		});
 		if (add_plugin.getItemCount() == 0) {
 			add_plugin.add(new JMenuItem("nothing to load here"));
