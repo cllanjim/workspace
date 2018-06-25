@@ -16,7 +16,7 @@ import org.iMage.shutterpile.port.IWatermarkSupplier;
  * @author Dominik Fuchss
  *
  */
-public final class ImageWatermarkSupplier implements IWatermarkSupplier {
+public final class ImageWatermarkSupplier extends AbstractWatermarkSupplier{
 
   /**
    * This factor indicates by how much the transparency is increased. The new value alpha' is
@@ -30,8 +30,6 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
 
   private final BufferedImage watermarkInput;
   private final boolean useGrayscaleFilter;
-
-  private BufferedImage createdWatermark;
 
   /**
    * Create the {@link IWatermarkSupplier} by base image of watermark. (Use GrayscaleFilter)
@@ -57,12 +55,12 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
     this.useGrayscaleFilter = useGrayscaleFilter;
   }
 
-  @Override
-  public BufferedImage getWatermark() {
-    if (this.createdWatermark == null) {
-      // Create ARGB image as filters need (A)RGB
-      BufferedImage watermark = ImageUtils.createARGBImage(this.watermarkInput);
-      // Apply GrayscaleFilter
+  public BufferedImage createWatermark() {
+	  return ImageUtils.createARGBImage(this.watermarkInput);
+  }
+  
+  public BufferedImage applyFilters(BufferedImage watermark) {
+	  // Apply GrayscaleFilter
       if (this.useGrayscaleFilter) {
         watermark = this.gsf.apply(watermark);
       }
@@ -71,8 +69,6 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
       // Set alpha value / create ARGB as we guarantee an ARBG-Image
       watermark = ImageUtils.createARGBImage(watermark);
       watermark = this.alf.apply(watermark);
-      this.createdWatermark = watermark;
-    }
-    return this.createdWatermark;
+      return watermark;
   }
 }
