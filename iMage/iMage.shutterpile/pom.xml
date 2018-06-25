@@ -7,15 +7,23 @@
   </parent>
   <artifactId>2057298</artifactId>
   <dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
   	<dependency>
   		<groupId>swt1</groupId>
   		<artifactId>iMage.shutterpile-base</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
   	</dependency>
   </dependencies>
-  <groupId>swt1.ub2.a4</groupId>
+  <groupId>swt1.ub5.a1</groupId>
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>swt1</groupId>
+  			<artifactId>iMage.shutterpile-base</artifactId>
+  			<version>0.0.1-SNAPSHOT</version>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
 </project>

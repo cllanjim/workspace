@@ -11,7 +11,7 @@ public class TextWatermarkSupplier extends AbstractWatermarkSupplier{
 	}
 	
 	public BufferedImage createWatermark() {
-		BufferedImage watermark = new BufferedImage(200,100,BufferedImage.TYPE_INT_ARGB);
+		BufferedImage watermark = new BufferedImage(this.watermarkString.length()*10,100,BufferedImage.TYPE_INT_ARGB);
 		watermark.createGraphics().drawString(this.watermarkString, 0, 0);
 		return watermark;
 	}
