@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import org.iMage.shutterpile.impl.filters.GrayscaleFilter;
 import org.iMage.shutterpile.impl.filters.ThresholdFilter;
+import org.iMage.shutterpile.impl.filters.AlphaFilter;
 import org.iMage.shutterpile.impl.util.ImageUtils;
 import org.iMage.shutterpile.port.IFilter;
 import org.iMage.shutterpile.port.IWatermarkSupplier;
@@ -25,6 +26,7 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
 
   private final IFilter gsf = new GrayscaleFilter();
   private final IFilter thf = new ThresholdFilter();
+  private final IFilter alf = new AlphaFilter();
 
   private final BufferedImage watermarkInput;
   private final boolean useGrayscaleFilter;
@@ -68,22 +70,9 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
       watermark = this.thf.apply(watermark);
       // Set alpha value / create ARGB as we guarantee an ARBG-Image
       watermark = ImageUtils.createARGBImage(watermark);
-      this.applyAlpha(watermark);
+      watermark = this.alf.apply(watermark);
       this.createdWatermark = watermark;
     }
     return this.createdWatermark;
   }
-
-  private void applyAlpha(BufferedImage wm) {
-    for (int i = 0; i < wm.getWidth(); i++) {
-      for (int q = 0; q < wm.getHeight(); q++) {
-        int color = wm.getRGB(i, q);
-        int alpha = color >> 24 & 0x000000FF;
-        alpha = (alpha * ImageWatermarkSupplier.DEFAULT_FACTOR) / 100;
-        wm.setRGB(i, q, (color & 0x00FFFFFF) | (alpha << 24));
-      }
-    }
-    wm.flush();
-  }
-
 }
