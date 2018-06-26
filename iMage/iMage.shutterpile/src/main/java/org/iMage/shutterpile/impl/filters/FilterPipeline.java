@@ -11,20 +11,24 @@ public class FilterPipeline implements IFilter {
 
 	private ArrayList<IFilter> filters;
 	
+	public FilterPipeline() {
+		this.filters = new ArrayList<IFilter>();
+	}
+	
 	/**
 	 * Adds a single filter to the pipeline
 	 * 
 	 * @param newFilter
 	 */
 	public void addFilter(IFilter newFilter) {
-		filters.add(newFilter);
+		this.filters.add(newFilter);
 	}
 	
 	/**
 	 * Clears the pipeline of all filters.
 	 */
 	public void clearFilters() {
-		filters.clear();
+		this.filters.clear();
 	}
 	
 	@Override

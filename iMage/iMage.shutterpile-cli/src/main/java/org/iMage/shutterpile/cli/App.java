@@ -12,10 +12,16 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.iMage.shutterpile.impl.BlurFilter;
+import org.iMage.shutterpile.impl.Rotate90Filter;
 import org.iMage.shutterpile.impl.Watermarker;
+import org.iMage.shutterpile.impl.filters.AlphaFilter;
+import org.iMage.shutterpile.impl.filters.FilterPipeline;
+import org.iMage.shutterpile.impl.filters.GrayscaleFilter;
+import org.iMage.shutterpile.impl.filters.ThresholdFilter;
+import org.iMage.shutterpile.impl.filters.WatermarkFilter;
 import org.iMage.shutterpile.impl.supplier.ImageWatermarkSupplier;
-import org.iMage.shutterpile.impl.supplier.RandomWatermarkSupplier;
-import org.iMage.shutterpile.impl.supplier.TextWatermarkSupplier;
+import org.iMage.shutterpile.port.IFilter;
 import org.iMage.shutterpile.port.IWatermarkSupplier;
 import org.iMage.shutterpile.port.IWatermarker;
 
@@ -35,6 +41,7 @@ public final class App {
   private static final String CMD_OPTION_RETURN_IMAGE = "r";
   private static final String CMD_OPTION_WATERMARKS_PER_ROW = "n";
   private static final String CMD_OPTION_COLORED = "c";
+  private static final String CMD_OPTION_PIPELINE = "p";
 
   private static final int DEFAULT_WATERMARKS_PER_ROW = 5;
 
@@ -48,6 +55,7 @@ public final class App {
    * {@link IWatermarker#generate(java.awt.image.BufferedImage, java.awt.image.BufferedImage, int)
    * IWatermarker#generate})<br>
    * <b>c</b> - indication, whether the used watermark should be colored (default: false)
+   * <b>p</b> - pipeline of filters, which are to be applied on the watermark
    *
    * @param args
    *          the command line arguments
@@ -88,7 +96,33 @@ public final class App {
       System.exit(1);
     }
 
-    IWatermarkSupplier wms = new ImageWatermarkSupplier(watermarkInput, !colored);
+    String pipeline = (cmd.hasOption(App.CMD_OPTION_PIPELINE) ? cmd.getOptionValue(App.CMD_OPTION_PIPELINE) : "");    
+    FilterPipeline filterPipeline = new FilterPipeline();  
+    // Iterate over the filters given in the pipeline
+    for(String f : pipeline.split("(?!^)")) {
+    	switch(f) {
+    	case "w":
+    		filterPipeline.addFilter(new WatermarkFilter(watermarkInput, watermarksPerRow));
+    		break;
+    	case "g":
+    		filterPipeline.addFilter(new GrayscaleFilter());
+    		break;
+    	case "t":
+    		filterPipeline.addFilter(new ThresholdFilter(127));
+    		break;
+    	case "a":
+    		filterPipeline.addFilter(new AlphaFilter());
+    		break;
+    	case "b":
+    		filterPipeline.addFilter(new BlurFilter());
+    		break;
+    	case "r":
+    		filterPipeline.addFilter(new Rotate90Filter());
+    		break;
+    	}
+    }
+    watermarkInput = filterPipeline.apply(watermarkInput);
+    ImageWatermarkSupplier wms = new ImageWatermarkSupplier(watermarkInput, false);
     IWatermarker wm = new Watermarker(wms);
     BufferedImage outputImage = wm.generate(input, watermarksPerRow);
 
@@ -166,6 +200,11 @@ public final class App {
     opt = new Option(App.CMD_OPTION_COLORED, "colored", false, "colored watermark");
     opt.setRequired(false);
     opt.setType(Boolean.class);
+    options.addOption(opt);
+    
+    opt = new Option(App.CMD_OPTION_PIPELINE, "pipeline", true, "filters to be applied to watermark");
+    opt.setRequired(false);
+    opt.setType(String.class);
     options.addOption(opt);
 
     CommandLineParser parser = new DefaultParser();
