@@ -17,16 +17,10 @@ import org.iMage.shutterpile.port.IWatermarkSupplier;
  *
  */
 public final class ImageWatermarkSupplier extends AbstractWatermarkSupplier{
-
-  /**
-   * This factor indicates by how much the transparency is increased. The new value alpha' is
-   * calculated by <em>alpha' = (alpha * FACTOR) / 100</em>
-   */
-  public static final int DEFAULT_FACTOR = 50;
-
+	
   private final IFilter gsf = new GrayscaleFilter();
   private final IFilter thf = new ThresholdFilter();
-  private final IFilter alf = new AlphaFilter();
+  private final AlphaFilter alf = new AlphaFilter();
 
   private final BufferedImage watermarkInput;
   private final boolean useGrayscaleFilter;
@@ -55,6 +49,20 @@ public final class ImageWatermarkSupplier extends AbstractWatermarkSupplier{
     this.useGrayscaleFilter = useGrayscaleFilter;
   }
 
+  /**
+   * Create the {@link IWatermarkSupplier} by base image of watermark.
+   *
+   * @param watermarkInput
+   *          the base image to create the watermark
+   * @param useGrayscaleFilter
+   *          indicates whether a {@link GrayscaleFilter} shall applied upon the input image
+   */
+  public ImageWatermarkSupplier(BufferedImage watermarkInput, boolean useGrayscaleFilter, int threshold) {
+    this.watermarkInput = watermarkInput;
+    this.useGrayscaleFilter = useGrayscaleFilter;
+    this.alf.setThreshold(threshold);
+  }
+  
   public BufferedImage createWatermark() {
 	  return ImageUtils.createARGBImage(this.watermarkInput);
   }

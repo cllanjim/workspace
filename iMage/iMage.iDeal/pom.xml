@@ -20,6 +20,7 @@
 							<classpathPrefix>lib/</classpathPrefix>
 							<classpathLayoutType>repository</classpathLayoutType>
 							<mainClass>org.iMage.iDeal.Main</mainClass>
+							<useUniqueVersions>false</useUniqueVersions>
 						</manifest>
 					</archive>
 				</configuration>
@@ -50,10 +51,10 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>swt1</groupId>
-			<artifactId>iMage.shutterpile</artifactId>
+			<groupId>swt1.ub5.a1</groupId>
+			<artifactId>2057298</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	<groupId>swt1.ub4.a1</groupId>
+	<groupId>swt1.ub4.a2</groupId>
 </project>

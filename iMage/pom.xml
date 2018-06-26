@@ -20,6 +20,8 @@
   	<module>iMage.shutterpile</module>
   	<module>iMage.facezine-plugin</module>
   	<module>jmjrst.main</module>
+  	
   	<module>iMage.iDeal</module>
+  	<module>iMage.shutterpile-cli</module>
   </modules>
 </project>

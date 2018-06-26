@@ -28,7 +28,6 @@
 			</includes>
 		</fileSet>
 
-
 		<fileSet>
 			<directory>target</directory>
 			<includes>
@@ -38,9 +37,4 @@
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
-	<!-- including the workspace .gitignore: <files>
-		<file>
-			<source>../../.gitignore</source>
-		</file>
-	</files> -->
 </assembly>

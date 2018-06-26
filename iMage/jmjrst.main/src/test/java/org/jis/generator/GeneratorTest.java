@@ -37,7 +37,8 @@ public class GeneratorTest {
    */
   private Generator generator;
 
-  private int imageHeight, imageWidth;
+  private int imageHeight;
+  private int imageWidth;
   private static final File TEST_DIR = new File("target/dataTest");
   private static final String IMAGE_FILE = "/picture.jpg";
 
