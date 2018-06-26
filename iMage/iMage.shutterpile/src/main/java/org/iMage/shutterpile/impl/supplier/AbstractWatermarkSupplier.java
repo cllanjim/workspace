@@ -16,8 +16,8 @@ public abstract class AbstractWatermarkSupplier implements IWatermarkSupplier{
 	    	BufferedImage watermark = this.createWatermark();
 	    	watermark = this.applyFilters(watermark);
 	        this.createdWatermark = watermark;
-	      }
-	      return this.createdWatermark;
+	    }
+	    return this.createdWatermark;
 	}
 	
 	public abstract BufferedImage createWatermark();

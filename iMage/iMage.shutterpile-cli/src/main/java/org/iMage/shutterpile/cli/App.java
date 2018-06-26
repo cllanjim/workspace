@@ -14,6 +14,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.iMage.shutterpile.impl.Watermarker;
 import org.iMage.shutterpile.impl.supplier.ImageWatermarkSupplier;
+import org.iMage.shutterpile.impl.supplier.RandomWatermarkSupplier;
+import org.iMage.shutterpile.impl.supplier.TextWatermarkSupplier;
 import org.iMage.shutterpile.port.IWatermarkSupplier;
 import org.iMage.shutterpile.port.IWatermarker;
 
