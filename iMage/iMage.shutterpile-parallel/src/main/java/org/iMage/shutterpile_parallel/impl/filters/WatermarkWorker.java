@@ -1,6 +1,7 @@
 package org.iMage.shutterpile_parallel.impl.filters;
 
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
 
 import org.iMage.shutterpile.impl.filters.WatermarkFilter;
 import org.iMage.shutterpile.port.IFilter;
@@ -36,6 +37,7 @@ public class WatermarkWorker implements Runnable {
 	public WatermarkWorker(BufferedImage watermark, BufferedImage input, BufferedImage result, int x, int y) {
 		this.watermark = watermark;
 		this.input = input;
+		this.result = result;
 		this.x = x;
 		this.y = y;
 	}

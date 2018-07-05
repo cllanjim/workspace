@@ -3,8 +3,10 @@ package org.iMage.shutterpile_parallel.impl.filters;
 import org.iMage.shutterpile.impl.util.ImageUtils;
 import org.iMage.shutterpile.port.IFilter;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Parallel implementation 
@@ -15,7 +17,7 @@ import java.util.concurrent.Executors;
 public class ParallelWatermarkFilter implements IFilter {
 	  private final BufferedImage watermark;
 	  private int watermarksPerRow;
-	  private ExecutorService threadPool;
+	  private ThreadPoolExecutor threadPool;
 	  
 	/**
 	 * Constructor for the ParallelWatermarkFilter.
@@ -31,11 +33,8 @@ public class ParallelWatermarkFilter implements IFilter {
 		this.watermark = watermark;
 		this.watermarksPerRow = watermarksPerRow;
 		
-		if (numThreads == 1) {
-			// TODO use the sequential algorithm
-		} else {
-			this.threadPool = Executors.newFixedThreadPool(numThreads);
-		}
+		this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads);
+		
 	}
 	
 	/**
@@ -57,7 +56,7 @@ public class ParallelWatermarkFilter implements IFilter {
 	 * @return
 	 */
 	private static int calculateOptimalAmountOfThreads() {
-		return 1;
+		return 4;
 	}
 	
 	@Override
@@ -75,6 +74,8 @@ public class ParallelWatermarkFilter implements IFilter {
 	    watermarkHeight = watermark.getHeight();
 
 	    BufferedImage result = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+	    
+	    int i = 0;
 		for (int x = 0; x < imgWidth; x += watermarkWidth) {
 			for (int y = 0; y < imgHeight; y += watermarkHeight) {
 				threadPool.execute(new WatermarkWorker(watermark, input, result, x, y));
@@ -82,6 +83,6 @@ public class ParallelWatermarkFilter implements IFilter {
 		}
 		threadPool.shutdown();
 	    while (!threadPool.isTerminated()) {}
-		return input;
+		return result;
 	}
 }
