@@ -1,9 +1,7 @@
 package org.iMage.shutterpile_parallel.impl.filters;
 
+import org.iMage.shutterpile.impl.util.ImageUtils;
 import org.iMage.shutterpile.port.IFilter;
-
-import sun.jvm.hotspot.utilities.WorkerThread;
-
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,19 +62,26 @@ public class ParallelWatermarkFilter implements IFilter {
 	
 	@Override
 	public BufferedImage apply(BufferedImage input) {
-		for (int i = 0; i < 10; i++) {
-	        Runnable worker = new WatermarkFilterWorkerThread(watermark);
-	        threadPool.execute(worker);
-	      }
-		threadPool.shutdown();
-	    while (!threadPool.isTerminated()) {
-	    }
-		return null;
-	}
-	
-	private BufferedImage applyToPart(BufferedImage inputPart) {
-		
-		return inputPart;
-	}
+	    int imgWidth = input.getWidth();
+	    int imgHeight = input.getHeight();
 
+	    int watermarkWidth = imgWidth / this.watermarksPerRow;
+	    int watermarkHeight;
+	    if (watermarkWidth <= 0) {
+	      throw new IllegalArgumentException("watermark width would be too small");
+	    }
+	    BufferedImage watermark = ImageUtils.createARGBImage(this.watermark);
+	    watermark = ImageUtils.scaleWidth(watermark, watermarkWidth);
+	    watermarkHeight = watermark.getHeight();
+
+	    BufferedImage result = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+		for (int x = 0; x < imgWidth; x += watermarkWidth) {
+			for (int y = 0; y < imgHeight; y += watermarkHeight) {
+				threadPool.execute(new WatermarkWorker(watermark, input, result, x, y));
+			}
+		}
+		threadPool.shutdown();
+	    while (!threadPool.isTerminated()) {}
+		return input;
+	}
 }
