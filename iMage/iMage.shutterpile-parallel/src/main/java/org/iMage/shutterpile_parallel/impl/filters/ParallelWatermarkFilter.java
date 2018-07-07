@@ -1,5 +1,6 @@
 package org.iMage.shutterpile_parallel.impl.filters;
 
+import org.iMage.shutterpile.impl.filters.WatermarkFilter;
 import org.iMage.shutterpile.impl.util.ImageUtils;
 import org.iMage.shutterpile.port.IFilter;
 import java.awt.image.BufferedImage;
@@ -15,9 +16,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  */
 public class ParallelWatermarkFilter implements IFilter {
-	  private final BufferedImage watermark;
+	  private BufferedImage watermark;
 	  private int watermarksPerRow;
 	  private ThreadPoolExecutor threadPool;
+	  private IFilter wmFilter;
 	  
 	/**
 	 * Constructor for the ParallelWatermarkFilter.
@@ -30,10 +32,15 @@ public class ParallelWatermarkFilter implements IFilter {
 	 * 			The desired amount of threads, the filter is supposed to run on.
 	 */
 	public ParallelWatermarkFilter(BufferedImage watermark, int watermarksPerRow, int numThreads) {
-		this.watermark = watermark;
-		this.watermarksPerRow = watermarksPerRow;
-		
-		this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads);
+		if (numThreads == 1) {
+			System.out.println("Watermark Filter initialized: 1 Core -> sequential version.");
+			this.wmFilter = new WatermarkFilter(watermark, watermarksPerRow);
+		} else if (numThreads > 1) {
+			this.watermark = watermark;
+			this.watermarksPerRow = watermarksPerRow;
+			System.out.println("Watermark Filter initialized: " + numThreads + " Cores -> parallel version.");
+			this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads);
+		}
 		
 	}
 	
@@ -56,33 +63,41 @@ public class ParallelWatermarkFilter implements IFilter {
 	 * @return
 	 */
 	private static int calculateOptimalAmountOfThreads() {
-		return 4;
+		int numCores = Runtime.getRuntime().availableProcessors();
+		return numCores;
 	}
 	
 	@Override
 	public BufferedImage apply(BufferedImage input) {
-	    int imgWidth = input.getWidth();
-	    int imgHeight = input.getHeight();
-
-	    int watermarkWidth = imgWidth / this.watermarksPerRow;
-	    int watermarkHeight;
-	    if (watermarkWidth <= 0) {
-	      throw new IllegalArgumentException("watermark width would be too small");
-	    }
-	    BufferedImage watermark = ImageUtils.createARGBImage(this.watermark);
-	    watermark = ImageUtils.scaleWidth(watermark, watermarkWidth);
-	    watermarkHeight = watermark.getHeight();
-
-	    BufferedImage result = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
-	    
-	    int i = 0;
-		for (int x = 0; x < imgWidth; x += watermarkWidth) {
-			for (int y = 0; y < imgHeight; y += watermarkHeight) {
-				threadPool.execute(new WatermarkWorker(watermark, input, result, x, y));
+		if (wmFilter != null) {
+			// case 1: sequential version
+			return wmFilter.apply(input);			
+		} else {
+			// case 2: parallel versions
+		    int imgWidth = input.getWidth();
+		    int imgHeight = input.getHeight();
+	
+		    int watermarkWidth = imgWidth / this.watermarksPerRow;
+		    int watermarkHeight;
+		    if (watermarkWidth <= 0) {
+		      throw new IllegalArgumentException("watermark width would be too small");
+		    }
+		    BufferedImage watermark = ImageUtils.createARGBImage(this.watermark);
+		    watermark = ImageUtils.scaleWidth(watermark, watermarkWidth);
+		    watermarkHeight = watermark.getHeight();
+	
+		    BufferedImage result = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+		    
+		    int i = 0;
+			for (int x = 0; x < imgWidth; x += watermarkWidth) {
+				for (int y = 0; y < imgHeight; y += watermarkHeight) {
+					threadPool.execute(new WatermarkWorker(watermark, input, result, x, y));
+				}
 			}
+			threadPool.shutdown();
+		    while (!threadPool.isTerminated()) {}
+			return result;
+			
 		}
-		threadPool.shutdown();
-	    while (!threadPool.isTerminated()) {}
-		return result;
 	}
 }

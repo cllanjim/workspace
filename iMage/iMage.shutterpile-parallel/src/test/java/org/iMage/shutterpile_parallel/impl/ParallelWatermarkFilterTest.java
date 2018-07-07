@@ -3,28 +3,16 @@ package org.iMage.shutterpile_parallel.impl;
 import static org.junit.Assert.fail;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.iMage.shutterpile.port.IFilter;
 import org.iMage.shutterpile_parallel.impl.filters.ParallelWatermarkFilter;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -34,87 +22,78 @@ import org.junit.Test;
  *
  */
 public class ParallelWatermarkFilterTest extends TestBase {
+
+	private static final String INPUT_IMAGE_FILE = "/testPicture.png";
+	private static final String WATERMARK_FILE = "/testPicture.png";
 	
-	private static ParallelWatermarkFilter filter;
-	private static final File TEST_DIR = new File("target/testData");
-	private static final String IMAGE_FILE = "/testPicture.png";
-	private static final String WATERMARK_FILE = "/watermark.png";
-	private static BufferedImage testImage;
+	private static BufferedImage inputImage;
 	private static BufferedImage watermark;
-	private static BufferedImage resultImage;
-	private IIOMetadata imeta;
+	private static BufferedImage testResultSequential;
+	private static final int WM_PER_ROW = 10;
 	
+	private static IFilter pwfOne;
+	private static IFilter pwfTwo;
+	private static IFilter pwfOptimal;
 	
 	/**
-	 * Setup the test
+	 * Testablauf:
+	 * 
+	 * 1) Setup dreier PWF: 1mal mit einem Kern, 1mal mit 2 Kernen, 1mal ohne Angabe -> optimale Zahl Kerne
+	 * 2) Durchlauf vom 1-Kern-PWF -> liefert BufferedImage testResultSequential
+	 * 3) Durchlauf von 2-Kern-PWF und optimal-PWF -> jeweils vergleich mit testResultSequential
+	 * 
 	 */
-	@Before
-	public void setup() {	
-		// Read the original image
-		try (ImageInputStream iis = ImageIO.createImageInputStream(
-				this.getClass().getResourceAsStream(IMAGE_FILE));) {
-			ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
-			reader.setInput(iis, true);
-			ImageReadParam params = reader.getDefaultReadParam();
-			testImage = reader.read(0, params);
-			imeta = reader.getImageMetadata(0);
-			reader.dispose();
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-		// Read the watermark image
-		try (ImageInputStream iis = ImageIO.createImageInputStream(
-				this.getClass().getResourceAsStream(WATERMARK_FILE));) {
-			ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
-			reader.setInput(iis, true);
-			ImageReadParam params = reader.getDefaultReadParam();
-			watermark = reader.read(0, params);
-			reader.dispose();
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-		
-		filter = new ParallelWatermarkFilter(watermark, 10, 3);
+	
+	@BeforeClass
+	public static void setup() {
+		inputImage = ParallelWatermarkFilterTest.loadImage(INPUT_IMAGE_FILE, "png");
+	    watermark = ParallelWatermarkFilterTest.loadImage(WATERMARK_FILE, "png");
+	    
+	    pwfOne = new ParallelWatermarkFilter(watermark, WM_PER_ROW, 1);
+	    pwfTwo = new ParallelWatermarkFilter(watermark, WM_PER_ROW, 2);
+	    pwfOptimal = new ParallelWatermarkFilter(watermark, WM_PER_ROW);
 	}
 	
-	/**
-	 * Save the file.
-	 */
-	@After
-	public void tearDown() {
-		SimpleDateFormat sdf = new SimpleDateFormat("HHmmss_SSS");
-	    String time = sdf.format(new Date());
+	@BeforeClass
+	public static void runSequntially() {
+		testResultSequential = pwfOne.apply(inputImage);
+	}
 
-	    File outputFile = new File(TEST_DIR + "/resultImage_" + time + ".png");
-
-	    if (resultImage != null) {
-	      try (FileOutputStream fos = new FileOutputStream(outputFile);
-	          ImageOutputStream ios = ImageIO.createImageOutputStream(fos);) {
-	        ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
-	        writer.setOutput(ios);
-
-	        ImageWriteParam iwparam = new JPEGImageWriteParam(Locale.getDefault());
-	        iwparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT); // mode explicit necessary
-
-	        // set PNG Quality
-	        iwparam.setCompressionQuality(1f);
-	        writer.write(imeta, new IIOImage(resultImage, null, null), iwparam);
-	        writer.dispose();
-	      } catch (IOException e) {
-	        fail();
-	      }
-	    }
-	  }
-
-	/**
-	 * Create a watermarked image.
-	 */
 	@Test
-	public void applyWatermark() {
-		Date start = new Date();
-		resultImage = filter.apply(testImage);
-		Date end = new Date();
-		long diff = end.getTime() - start.getTime();
-		System.out.println("Duration: " + diff);
+	public void runParallelOnTwoCores() {
+		BufferedImage testResultTwoCores = pwfTwo.apply(inputImage);
+		ParallelWatermarkFilterTest.compareImages(testResultSequential, testResultTwoCores, false);
 	}
+	
+	@Test
+	public void runParallelOnOptimalAmountOfCores() {
+		BufferedImage testResultOptimalAmountOfCores = pwfOptimal.apply(inputImage);
+		ParallelWatermarkFilterTest.compareImages(testResultSequential, testResultOptimalAmountOfCores, false);
+	}
+	
+	
+	/**
+	 * Loads an image-file into a BufferedImage.
+	 * @param file
+	 * 			The file to load.
+	 * @param format
+	 * 			The format to load the file in.
+	 * @return
+	 * 			The loaded BufferedImage.
+	 */
+	private static BufferedImage loadImage(String file, String format) {
+	    try (ImageInputStream iis = ImageIO
+	        .createImageInputStream(ParallelWatermarkFilterTest.class.getResourceAsStream(file));) {
+	      ImageReader reader = ImageIO.getImageReadersByFormatName(format).next();
+	      reader.setInput(iis, true);
+	      ImageReadParam params = reader.getDefaultReadParam();
+	      BufferedImage image = reader.read(0, params);
+	      reader.dispose();
+	      return image;
+	    } catch (IOException e) {
+	      fail(e.getMessage());
+	      return null;
+	    }
+	}
+	
 }
