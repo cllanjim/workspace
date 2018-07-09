@@ -23,8 +23,8 @@ import org.junit.Test;
  */
 public class ParallelWatermarkFilterTest extends TestBase {
 
-	private static final String INPUT_IMAGE_FILE = "/testPicture.png";
-	private static final String WATERMARK_FILE = "/testPicture.png";
+	private static final String INPUT_IMAGE_FILE = "/testPicture.jpg";
+	private static final String WATERMARK_FILE = "/watermark.png";
 	
 	private static BufferedImage inputImage;
 	private static BufferedImage watermark;
@@ -36,17 +36,12 @@ public class ParallelWatermarkFilterTest extends TestBase {
 	private static IFilter pwfOptimal;
 	
 	/**
-	 * Testablauf:
-	 * 
-	 * 1) Setup dreier PWF: 1mal mit einem Kern, 1mal mit 2 Kernen, 1mal ohne Angabe -> optimale Zahl Kerne
-	 * 2) Durchlauf vom 1-Kern-PWF -> liefert BufferedImage testResultSequential
-	 * 3) Durchlauf von 2-Kern-PWF und optimal-PWF -> jeweils vergleich mit testResultSequential
-	 * 
+	 * set up the filters and test-images
 	 */
 	
 	@BeforeClass
 	public static void setup() {
-		inputImage = ParallelWatermarkFilterTest.loadImage(INPUT_IMAGE_FILE, "png");
+		inputImage = ParallelWatermarkFilterTest.loadImage(INPUT_IMAGE_FILE, "jpg");
 	    watermark = ParallelWatermarkFilterTest.loadImage(WATERMARK_FILE, "png");
 	    
 	    pwfOne = new ParallelWatermarkFilter(watermark, WM_PER_ROW, 1);
@@ -54,17 +49,26 @@ public class ParallelWatermarkFilterTest extends TestBase {
 	    pwfOptimal = new ParallelWatermarkFilter(watermark, WM_PER_ROW);
 	}
 	
+	/**
+	 * run the watermark filter using one core -> sequentially
+	 */
 	@BeforeClass
 	public static void runSequntially() {
 		testResultSequential = pwfOne.apply(inputImage);
 	}
 
+	/**
+	 * run the watermark filter using two cores -> parallel
+	 */
 	@Test
 	public void runParallelOnTwoCores() {
 		BufferedImage testResultTwoCores = pwfTwo.apply(inputImage);
 		ParallelWatermarkFilterTest.compareImages(testResultSequential, testResultTwoCores, false);
 	}
 	
+	/**
+	 * run the watermark filter using the optimal amount of cores
+	 */
 	@Test
 	public void runParallelOnOptimalAmountOfCores() {
 		BufferedImage testResultOptimalAmountOfCores = pwfOptimal.apply(inputImage);
@@ -81,7 +85,7 @@ public class ParallelWatermarkFilterTest extends TestBase {
 	 * @return
 	 * 			The loaded BufferedImage.
 	 */
-	private static BufferedImage loadImage(String file, String format) {
+	public static BufferedImage loadImage(String file, String format) {
 	    try (ImageInputStream iis = ImageIO
 	        .createImageInputStream(ParallelWatermarkFilterTest.class.getResourceAsStream(file));) {
 	      ImageReader reader = ImageIO.getImageReadersByFormatName(format).next();

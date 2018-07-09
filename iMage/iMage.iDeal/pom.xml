@@ -57,4 +57,5 @@
 		</dependency>
 	</dependencies>
 	<groupId>swt1.ub4.a2</groupId>
+	<name>iMage.iDeal</name>
 </project>

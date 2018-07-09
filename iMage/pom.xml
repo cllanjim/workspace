@@ -24,5 +24,7 @@
   	<module>iMage.iDeal</module>
   	<module>iMage.shutterpile-cli</module>
   	<module>iMage.shutterpile-parallel</module>
+  	
+  	<module>iMage.shutterpile-parallel-acceptance</module>
   </modules>
 </project>

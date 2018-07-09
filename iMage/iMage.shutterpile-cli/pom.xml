@@ -60,4 +60,5 @@
   </build>
   
   <groupId>swt1.ub5.a2</groupId>
+  <name>iMage.shutterpile-cli</name>
 </project>

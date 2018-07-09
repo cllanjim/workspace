@@ -15,18 +15,6 @@
 		</fileSet>
 
 		<fileSet>
-			<directory>src</directory>
-				<excludes>
-					<!-- Dateien werden hier relativ zu src/ adressiert! -->
-					<exclude>test/resources/F10_Ausgabe.png</exclude>
-					<exclude>test/resources/F10_Eingabe.png</exclude>
-					<exclude>test/resources/F10_WZ.png</exclude>
-					<exclude>test/resources/NF10_Bild.png</exclude>
-					<exclude>test/resources/NF10_WZ.png</exclude>
-				</excludes>
-		</fileSet>
-
-		<fileSet>
 			<useDefaultExcludes>false</useDefaultExcludes>
 			<includes>
 				<include>pom.xml</include>

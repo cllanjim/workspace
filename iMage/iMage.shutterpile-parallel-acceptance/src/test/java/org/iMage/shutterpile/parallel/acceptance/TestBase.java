@@ -1,7 +1,9 @@
-package org.iMage.shutterpile_parallel.impl;
+package org.iMage.shutterpile.parallel.acceptance;
 
 import java.awt.image.BufferedImage;
-import org.junit.Assert;
+
+import junit.framework.Assert;
+
 
 /**
  * The base class of all tests.
