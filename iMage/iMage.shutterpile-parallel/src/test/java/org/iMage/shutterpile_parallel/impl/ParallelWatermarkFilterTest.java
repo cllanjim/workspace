@@ -85,7 +85,7 @@ public class ParallelWatermarkFilterTest extends TestBase {
 	 * @return
 	 * 			The loaded BufferedImage.
 	 */
-	public static BufferedImage loadImage(String file, String format) {
+	private static BufferedImage loadImage(String file, String format) {
 	    try (ImageInputStream iis = ImageIO
 	        .createImageInputStream(ParallelWatermarkFilterTest.class.getResourceAsStream(file));) {
 	      ImageReader reader = ImageIO.getImageReadersByFormatName(format).next();
