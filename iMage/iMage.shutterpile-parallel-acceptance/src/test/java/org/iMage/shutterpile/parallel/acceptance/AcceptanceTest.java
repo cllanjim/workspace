@@ -84,7 +84,7 @@ public class AcceptanceTest extends TestBase {
 	 * Die Ausführzeit des sequentiellen Wasserzeichenfilters für das Bild NF10_Bild.PNG, 
 	 * das Wasserzeichen-Bild NF10_WZ.PNG und 30 Wasserzeichen pro Reihe beträgt höchstens 1,5 Sekunden.
 	 */
-	@Ignore @Test
+	@Test
 	public void durationTimeLimit() {
 		IFilter seqPWF = new ParallelWatermarkFilter(testImages[3], 30, 1);
 		double seqDuration = AcceptanceTest.measureTime(seqPWF, testImages[4]);
@@ -143,7 +143,7 @@ public class AcceptanceTest extends TestBase {
 	 * zwei Ausführungsfäden für das Bild NF10_Bild.PNG, das Wasserzeichen-Bild 
 	 * NF10_WZ.PNG und 30 Wasserzeichen pro Reihe beträgt pro Lauf höchstens 100 Millisekunden.
 	 */
-	@Ignore @Test
+	@Test
 	public void maximalVariationLimit() {
 		int iterations = 10;
 		double maxDuration = 0;
@@ -161,6 +161,30 @@ public class AcceptanceTest extends TestBase {
 		double delta = maxDuration - minDuration;
 		Assert.assertTrue("Variation of duration was too great. (It was " + delta + "ms)",
 				delta <= 100);
+	}
+	
+	/**
+	 * NF50
+	 * 
+	 * Measure overhead of 16cores
+	 */
+	@Test
+	public void measureOverhead() {
+		IFilter seqPWF = new ParallelWatermarkFilter(testImages[3], 30, 1);
+		seqPWF.apply(testImages[4]);
+		Runtime run1 = Runtime.getRuntime();
+		run1.gc();
+		long overheadS = run1.totalMemory() - run1.freeMemory();
+		
+		IFilter pwf = new ParallelWatermarkFilter(testImages[3], 30, 16);
+		pwf.apply(testImages[4]);
+		Runtime run2 = Runtime.getRuntime();
+		run2.gc();
+		long overheadP = run2.totalMemory() - run2.freeMemory();
+		
+		double percentage = 100 * ((double) overheadP / overheadS);
+		Assert.assertTrue("Overhead of parallel version is greater than 0.5%", 
+				percentage <= 100.5);
 	}
 	
 	/**
@@ -198,4 +222,11 @@ public class AcceptanceTest extends TestBase {
 		return endTime.getTime() - startTime.getTime();
 	}
 	
+	/**
+	 * Convert from bytes to megabytes
+	 */
+	private static double bytesToMegabytes(long bytes) {
+		final long megabyte = 1024L * 1024L;
+		return (double) bytes / megabyte;
+	}
 }
