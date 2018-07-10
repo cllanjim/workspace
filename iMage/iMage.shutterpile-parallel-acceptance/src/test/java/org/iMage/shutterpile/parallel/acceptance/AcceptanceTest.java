@@ -12,7 +12,9 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import org.iMage.shutterpile.impl.supplier.ImageWatermarkSupplier;
 import org.iMage.shutterpile.port.IFilter;
+import org.iMage.shutterpile.port.IWatermarkSupplier;
 import org.iMage.shutterpile_parallel.impl.filters.ParallelWatermarkFilter;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -39,6 +41,10 @@ public class AcceptanceTest extends TestBase {
 		for (int i = 0; i < inputImagePaths.length; i++) {
 			testImages[i] = AcceptanceTest.loadImage(inputImagePaths[i], "png");
 		}
+		IWatermarkSupplier wmSupplier = new ImageWatermarkSupplier(testImages[1]);
+		testImages[1] = wmSupplier.getWatermark();
+		wmSupplier = new ImageWatermarkSupplier(testImages[3]);
+		testImages[3] = wmSupplier.getWatermark();
 	}
 	
 	/**
@@ -48,7 +54,7 @@ public class AcceptanceTest extends TestBase {
 	 * "F10_Eingabe.png", das Wasserzeichen-Bild "F10_WZ.png" und 2 Wasserzeichen 
 	 * pro Reihe immer das Bild "F10_Ausgabe.png".
 	 */
-	@Ignore("Test will fail.") @Test
+	@Test
 	public void twoWatermarksPerRow() {
 		IFilter seqWMF = new ParallelWatermarkFilter(testImages[1], 2, 1);
 		BufferedImage result = seqWMF.apply(testImages[0]);
@@ -93,7 +99,7 @@ public class AcceptanceTest extends TestBase {
 	 * Bild NF10_Bild.PNG, das Wasserzeichen-Bild NF10_WZ.PNG und 30 Wasserzeichen 
 	 * pro Reihe beträgt höchstens 75% der Laufzeit der sequentiellen Ausführung des Filters.
 	 */
-	@Ignore @Test
+	@Test
 	public void parallelIsMoreTimeEffizient() {
 		IFilter seqPWF = new ParallelWatermarkFilter(testImages[3], 30, 1);
 		double seqDuration = AcceptanceTest.measureTime(seqPWF, testImages[4]);
