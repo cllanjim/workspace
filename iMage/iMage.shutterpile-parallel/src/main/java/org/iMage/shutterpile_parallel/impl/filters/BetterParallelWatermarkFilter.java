@@ -95,33 +95,38 @@ public class BetterParallelWatermarkFilter implements IFilter {
 							? imgHeight - (watermarksPerColumn - 1) * watermarkHeight : watermarkHeight;
 							
 					if (w != 0 && h != 0) {
-						result[x][y] = input.getSubimage(x * watermarkWidth, y * watermarkHeight, w, h);
+						BufferedImage img = new BufferedImage(w, h, input.getType());
+						Graphics2D graphics = (Graphics2D) img.getGraphics();
+						graphics.drawImage(input.getSubimage(x * watermarkWidth, y * watermarkHeight, w, h),
+								null, 0, 0);						
+						result[x][y] = img;
 					}
 					threadPool.execute(new WatermarkWorker(watermark, result[x][y], result[x][y], 0, 0));
 				}
 			}
 			threadPool.shutdown();
 		    while (!threadPool.isTerminated()) {}
-			return combineFragments(result, new BufferedImage(input.getWidth(), input.getHeight(), input.getType()));
+			return combineFragments(result, imgWidth, imgHeight);
 		}
 	}
 
-	private BufferedImage combineFragments(BufferedImage[][] input, BufferedImage result) {
+	private BufferedImage combineFragments(BufferedImage[][] input, int width, int height) {
+		BufferedImage result = new BufferedImage(width, height, input[0][0].getType());
 		Graphics2D graphics = (Graphics2D) result.getGraphics();
 		
 		int posX = 0;
 		int posY = 0;
 		for (int y = 0; y < input[0].length; y++) {
-			int height = 0;
+			int h = 0;
 			for (int x = 0; x < input.length; x++) {
 				if (input[x][y] != null) {
 					BufferedImage img = input[x][y];
 					graphics.drawImage(img, null, posX, posY);
 					posX += img.getWidth();
-					height = img.getHeight();
+					h = img.getHeight();
 				}
 			}
-			posY += height;
+			posY += h;
 			posX = 0;
 		}
 		return result;
